@@ -1,0 +1,18 @@
+%% para realizar el analisis de audio tenemos 2 posibilidades 
+opcion=input('desea ingresar audio presione 0 o iniciar grabación presione 1 : ');
+if opcion 
+%por ingreso de archivo .wav
+archivo=input('indique el nombre del archivo.wav');
+[PNacimiento Fs bits]=readwav(archivo);
+else
+%%Grabacion directa del sonido
+%definimos la frecuencia de muestreo 
+fs=44100;
+PNacimiento = audiorecorder(fs,16,1);
+end
+
+%% Del archivo obtenido se procede ha realizar el analisis espectral
+
+
+%%references
+%https://www.cs.tut.fi/sgn/arg/intro/basics.html
