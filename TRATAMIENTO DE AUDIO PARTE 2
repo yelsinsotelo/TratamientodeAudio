@@ -1,0 +1,76 @@
+bool=input('desea hacer una nueva prueba : ');
+while bool == 'si' 
+%% para realizar el analisis de audio tenemos 2 posibilidades 
+fprintf('***********************************************************\n       Primero debe ingresar la Partida de Nacimiento    \n *******************************************************\n')
+opcion=input('-->1: Ingresar un archivo de audio \n-->0: Para grabar un audio\nelija una opción :  ');
+if opcion 
+%por ingreso de archivo .wav
+archivo=input('indique el nombre del archivo.wav : ');
+[y, Fs]=audioread(archivo);
+PNacimiento=y(:,1);
+PNacimiento=downsample(PNacimiento,10);
+Fs=Fs/10;
+t=1/Fs:1/Fs:length(PNacimiento)/Fs;
+subplot(2,1,1),plot(t,PNacimiento)
+xlabel('Tiempo ( s )');
+ylabel('Magnitud');
+t1=0:1/Fs:1;
+nfft=1024;
+Y=fft(PNacimiento,nfft);
+Y=Y(1:nfft/2);
+my=abs(Y);
+f=(0:nfft/2-1)*Fs/nfft;
+subplot(2,1,2),plot(f,my);
+set(gca,'xTick',0:60:2400);
+else
+%%Grabacion directa del sonido
+%definimos la frecuencia de muestreo 
+Fs=4410;
+PNacimiento = audiorecorder(fs,16,1);
+t=1/Fs:1/Fs:length(PNacimiento)/Fs;
+subplot(2,1,1),plot(t,PNacimiento)
+xlabel('Tiempo ( s )');
+ylabel('Magnitud');
+t1=0:1/Fs:1;
+nfft=1024;
+Y=fft(PNacimiento,nfft);
+Y=Y(1:nfft/2);
+my=abs(Y);
+f=(0:nfft/2-1)*Fs/nfft;
+subplot(2,1,2),plot(f,my);
+set(gca,'xTick',0:60:2400);
+end
+
+%% Del archivo obtenido se procede ha realizar el analisis espectral
+n=1;
+k=1;
+while (60*n)<2300 
+    for i=1:length(f);
+        if(f(i)>(60*n-5) && f(i)<(60*n+5) )
+            sfrec(k)=f(i);
+            spico(k)=my(i);
+            k=k+1;
+        end
+    end
+    n=n+1;
+end
+med=1;
+while length(spico)*med<sum(spico)
+    med=med+0.01;   
+end
+k=1;
+for i=1:length(spico);
+        if(spico(i)>med)
+            frec(k)=sfrec(i);
+            pico(k)=spico(i);
+            k=k+1;
+        end
+end
+figure;
+stem(frec,pico)
+    
+end
+%%
+
+%%references
+%https://www.cs.tut.fi/sgn/arg/intro/basics.html
