@@ -1,0 +1,177 @@
+bool=input('desea hacer una nueva prueba : ');
+while bool == 'si' 
+%% para realizar el analisis de audio tenemos 2 posibilidades 
+fprintf('***********************************************************\n       Primero debe ingresar la Partida de Nacimiento    \n *******************************************************\n')
+opcion=input('-->1: Ingresar un archivo de audio \n-->0: Para grabar un audio\nelija una opción :  ');
+if opcion 
+%por ingreso de archivo .wav
+archivo=input('indique el nombre del archivo.wav : ');
+[y, Fs]=audioread(archivo);
+PNacimiento=y(:,1);
+PNacimiento=downsample(PNacimiento,10);
+Fs=Fs/10;
+t=1/Fs:1/Fs:length(PNacimiento)/Fs;
+subplot(2,1,1),plot(t,PNacimiento)
+title('PNacimiento');
+xlabel('Tiempo ( s )');
+ylabel('Magnitud');
+t1=0:1/Fs:1;
+nfft=1024;
+Y=fft(PNacimiento,nfft);
+Y=Y(1:nfft/2);
+my=abs(Y);
+f=(0:nfft/2-1)*Fs/nfft;
+subplot(2,1,2),plot(f,my);
+set(gca,'xTick',0:60:2400);
+else
+%%Grabacion directa del sonido
+%definimos la frecuencia de muestreo 
+Fs=4410;
+PNacimiento = audiorecorder(fs,16,1);
+t=1/Fs:1/Fs:length(PNacimiento)/Fs;
+subplot(2,1,1),plot(t,PNacimiento)
+xlabel('Tiempo ( s )');
+ylabel('Magnitud');
+t1=0:1/Fs:1;
+nfft=1024;
+Y=fft(PNacimiento,nfft);
+Y=Y(1:nfft/2);
+my=abs(Y);
+f=(0:nfft/2-1)*Fs/nfft;
+subplot(2,1,2),plot(f,my);
+set(gca,'xTick',0:60:2400);
+end
+
+%% Del archivo obtenido se procede ha realizar el analisis espectral
+n=1;
+k=1;
+while (60*n)<2300 
+    for i=1:length(f);
+        if(f(i)>(60*n-5) && f(i)<(60*n+5) )
+            sfrec(k)=f(i);
+            spico(k)=my(i);
+            k=k+1;
+        end
+    end
+    n=n+1;
+end
+med=1;
+while length(spico)*med<sum(spico)
+    med=med+0.01;   
+end
+k=1;
+for i=1:length(spico);
+        if(spico(i)>med)
+            vsfrec(k)=sfrec(i);
+            vspico(k)=spico(i);
+            k=k+1;
+        end
+end
+k=1;
+med=0;
+for i=1:length(vspico);
+        if(vspico(i)>med)
+            frec(k)=vsfrec(i);
+            pico(k)=vspico(i);
+            k=k+1;
+        end
+end
+figure;
+stem(frec,pico)
+
+bool2=input('Desea empezar TEST : ');
+while bool2 == 'si' 
+fprintf('***********************************************************\n       Primero debe ingresar el audio de Prueba    \n *******************************************************\n')
+Popcion=input('-->1: Ingresar un archivo de audio \n-->0: Para grabar un audio\nelija una opción :  ');
+if Popcion 
+%por ingreso de archivo .wav
+archivoP=input('indique el nombre del archivo.wav : ');
+[yP, FsP]=audioread(archivoP);
+Prueba=yP(:,1);
+Prueba=downsample(Prueba,10);
+FsP=FsP/10;
+t=1/FsP:1/FsP:length(Prueba)/FsP;
+figure;
+subplot(2,1,1),plot(t,Prueba)
+title('PRUEBA')
+xlabel('Tiempo ( s )');
+ylabel('Magnitud');
+t1P=0:1/FsP:1;
+nfftP=1024;
+YP=fft(Prueba,nfftP);
+YP=YP(1:nfftP/2);
+myP=abs(YP);
+fP=(0:nfftP/2-1)*FsP/nfftP;
+subplot(2,1,2),plot(fP,myP);
+set(gca,'xTick',0:60:2400);
+else
+%%Grabacion directa del sonido
+%definimos la frecuencia de muestreo 
+FsP=4410;
+Prueba = audiorecorder(FsP,16,1);
+tP=1/FsP:1/FsP:length(Prueba)/FsP;
+figure;
+subplot(2,1,1),plot(tP,Prueba)
+xlabel('Tiempo ( s )');
+ylabel('Magnitud');
+t1P=0:1/FsP:1;
+nfftP=1024;
+YP=fft(Prueba,nfftP);
+YP=YP(1:nfftP/2);
+myP=abs(YP);
+fP=(0:nfftP/2-1)*FsP/nfftP;
+subplot(2,1,2),plot(fP,myP);
+set(gca,'xTick',0:60:2400);
+end
+
+%% Del archivo obtenido se procede ha realizar el analisis espectral
+n=1;
+k=1;
+while (60*n)<2300 
+    for i=1:length(fP);
+        if(fP(i)>(60*n-5) && fP(i)<(60*n+5) )
+            sfrecP(k)=fP(i);
+            spicoP(k)=myP(i);
+            k=k+1;
+        end
+    end
+    n=n+1;
+end
+med=1;
+while length(spicoP)*med<sum(spicoP)
+    med=med+0.01;   
+end
+k=1;
+for i=1:length(spicoP);
+        if(spicoP(i)>med)
+            vsfrecP(k)=sfrecP(i);
+            vspicoP(k)=spicoP(i);
+            k=k+1;
+        end
+end
+med=1;
+while length(vspicoP)*med<sum(vspicoP)
+    med=med+0.01;   
+end
+k=1;
+for i=1:length(vspicoP);
+        if(vspicoP(i)>med)
+            frecP(k)=vsfrecP(i);
+            picoP(k)=vspicoP(i);
+            k=k+1;
+        end
+end
+figure;
+stem(frecP,picoP)
+
+
+
+
+
+end
+
+end
+%%
+
+%%references
+%https://www.cs.tut.fi/sgn/arg/intro/basics.html
