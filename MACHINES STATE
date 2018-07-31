@@ -1,0 +1,65 @@
+  #include <stdio.h>
+#include <string.h>
+
+typedef enum {S0,S1,S2,S3} STATE;
+int main () {
+    STATE current_State=S0;
+    int salida;
+    int entrada;
+
+while(1){
+    printf("ESTADO S%d",current_State);
+    scanf("%d",&entrada);
+switch(current_State) {
+case S0 :
+    if (entrada==1){
+    current_State=S1;
+    }
+    if (entrada==0){
+    current_State=S0;
+    }
+    salida=0;
+    break;
+
+
+case S1 :
+    if (entrada==1){
+       current_State=S1;
+    }
+    if (entrada==0){
+       current_State=S2;
+    }
+    salida=0;
+    break;
+
+
+case S2 :
+    if (entrada==1){
+        current_State=S3;
+    }
+    if (entrada==0){
+        current_State=S2;
+    }
+    salida=0;
+    break;
+
+
+
+case S3 :
+
+    if (entrada==1){
+        current_State=S0;
+    }
+    if (entrada==0){
+        current_State=S2;
+    }
+    salida=1;
+
+    break;
+     }
+        }
+    return 0;
+
+
+
+}
